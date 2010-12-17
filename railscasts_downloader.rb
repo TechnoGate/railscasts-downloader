@@ -34,9 +34,8 @@ videos_urls = rss.items.map { |it| it.enclosure.url }.reverse
 
 # We only need to download what's missing, in progress files are considered missing as well
 videos_filenames = videos_urls.map {|url| url.split('/').last }
-existing_filenames = Dir.glob('*.mov')
 inprogress_filenames = Dir.glob('*.mov.aria2').map { |f| f.gsub(/\.aria2$/, '') }
-existing_filenames -= inprogress_filenames
+existing_filenames = Dir.glob('*.mov') - inprogress_filenames
 missing_filenames = videos_filenames - existing_filenames
 p "Downloading #{missing_filenames.size} missing videos"
 
