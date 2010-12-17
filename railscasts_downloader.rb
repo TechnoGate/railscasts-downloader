@@ -25,6 +25,15 @@
 require 'rss'
 require 'tempfile'
 
+def execute_command(command)
+  progress = nil
+  IO.popen(command) do |pipe|
+    pipe.each("r") do |line|
+      print line
+    end
+  end
+end
+
 p 'Downloading rss index'
 
 # Download the RSS Feed and parse video urls
@@ -50,7 +59,7 @@ end
 missing_videos_file.flush
 
 # Run aria2c
-p %x(/usr/bin/aria2c --ftp-pasv --continue --max-tries=3 --split=5 --input-file=#{missing_videos_file.path})
+execute_command("/usr/bin/aria2c --ftp-pasv --continue --max-tries=3 --split=5 --input-file=#{missing_videos_file.path}")
 
 # Cleanup and exit
 p 'Finished synchronization'
