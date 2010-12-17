@@ -46,20 +46,23 @@ videos_filenames = videos_urls.map {|url| url.split('/').last }
 inprogress_filenames = Dir.glob('*.mov.aria2').map { |f| f.gsub(/\.aria2$/, '') }
 existing_filenames = Dir.glob('*.mov') - inprogress_filenames
 missing_filenames = videos_filenames - existing_filenames
-p "Downloading #{missing_filenames.size} missing videos"
 
 # Generate a hash of videos urls from filenames (missing filesnames that is)
 missing_videos_urls = videos_urls.select { |video_url| missing_filenames.any? { |filename| video_url.match filename } }
 
-# Add all urls to a temporary file
-missing_videos_file = Tempfile.new('missing_railscasts_files')
-missing_videos_urls.each do |video_url|
-  missing_videos_file << video_url + "\n"
-end
-missing_videos_file.flush
+if missing_videos_urls.size > 0
+  p "Downloading #{missing_filenames.size} missing videos"
 
-# Run aria2c
-execute_command("/usr/bin/aria2c --ftp-pasv --continue --max-tries=3 --split=5 --input-file=#{missing_videos_file.path}")
+  # Add all urls to a temporary file
+  missing_videos_file = Tempfile.new('missing_railscasts_files')
+  missing_videos_urls.each do |video_url|
+    missing_videos_file << video_url + "\n"
+  end
+  missing_videos_file.flush
+
+  # Run aria2c
+  execute_command("/usr/bin/aria2c --ftp-pasv --continue --max-tries=3 --split=5 --input-file=#{missing_videos_file.path}")
+end
 
 # Cleanup and exit
 p 'Finished synchronization'
