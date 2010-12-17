@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # -*- ruby -*-
 #--
 #  vim:ft=ruby:fenc=UTF-8:ts=2:sts=2:sw=2:expandtab
